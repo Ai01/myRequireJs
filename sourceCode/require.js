@@ -132,12 +132,12 @@ let require, define;
      */
     Module.prototype.analyzeDep = function () {
         let depCount = this.dep ? this.dep.length : 0;
-
         // 处理dep中包含'require'的特殊情况
         let requireInDep = (this.dep || []).indexOf('require');
         if (requireInDep !== -1) {
             depCount--;
             this.requireInDep = requireInDep;
+
             this.dep.splice(requireInDep, 1);
         }
 
@@ -173,6 +173,7 @@ let require, define;
         if (!this.depCount) return;
 
         this.dep.forEach((depModuleName) => {
+            console.log('name', depModuleName);
             if (!modules[depModuleName]) {
                 let module = new Module(depModuleName);
                 modules[module.name] = module;
@@ -214,8 +215,11 @@ let require, define;
             arg.splice(this.requireInDep, 0, require);
         }
 
+        console.log(arg);
+
         this.exports = this.cb.apply(this, arg);
         this.callHook('EXECUTED');
+        console.log('mid', this.mid);
         if (this.tid) {
             console.log(`任务${this.tid}执行完成`);
         } else if (this.mid) {
